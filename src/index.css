@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-sand text-ink font-body antialiased; }
+  h1, h2, h3 { @apply font-display; text-wrap: balance; }
+  a:focus-visible, button:focus-visible { @apply outline outline-2 outline-offset-2 outline-teal-600 rounded; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

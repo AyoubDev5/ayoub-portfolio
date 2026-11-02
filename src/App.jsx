@@ -6,6 +6,7 @@ import {
 import { contact, facts, services, projects, pastClients, steps, stack } from './data'
 
 const ease = [0.22, 1, 0.36, 1]
+const waLink = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent('السلام عليكم أيوب، شفت ملفك وعندنا مشروع نبي نتكلم عنه.')}`
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
@@ -36,6 +37,13 @@ function Icon({ name, className = 'h-6 w-6' }) {
     case 'close': return <svg {...p}><path d="M6 6l12 12M18 6L6 18" /></svg>
     case 'up': return <svg {...p}><path d="M12 19V5M6 11l6-6 6 6" /></svg>
     case 'mail': return <svg {...p}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></svg>
+    case 'expand': return <svg {...p}><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" /></svg>
+    case 'whatsapp':
+      return (
+        <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
+          <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 004.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0012.04 2zm5.8 14.1c-.24.68-1.42 1.3-1.95 1.35-.5.05-.97.23-3.27-.68-2.77-1.09-4.52-3.92-4.66-4.1-.13-.18-1.11-1.48-1.11-2.82 0-1.34.7-2 .95-2.27.25-.27.54-.34.72-.34h.52c.17 0 .39-.06.61.47.23.54.77 1.88.84 2.02.07.13.11.29.02.47-.09.18-.13.29-.27.45l-.4.47c-.13.13-.27.28-.12.55.16.27.7 1.15 1.5 1.86 1.03.92 1.9 1.2 2.17 1.34.27.13.43.11.59-.07.16-.18.68-.79.86-1.06.18-.27.36-.23.61-.14.25.09 1.58.75 1.85.88.27.13.45.2.52.32.07.11.07.66-.17 1.33z" />
+        </svg>
+      )
     default: return null
   }
 }
@@ -84,7 +92,7 @@ function Nav() {
       <nav className={`mx-auto flex max-w-6xl items-center justify-between rounded-2xl px-4 py-2.5 transition-all duration-300 sm:px-5 ${scrolled ? 'glass shadow-2xl shadow-black/40' : 'border border-transparent'}`}>
         <a href="#top" className="flex items-center gap-2.5" aria-label="الصفحة الرئيسية">
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-mint-400 to-sky-500 text-sm font-black text-night-950">AT</span>
-          <span className="text-lg font-bold text-white">أيوب تقي</span>
+          <span className="text-lg font-bold text-white">أيوب تاقي</span>
         </a>
 
         <ul className="hidden items-center gap-1 md:flex">
@@ -421,7 +429,96 @@ function ProjectVisual({ type }) {
   )
 }
 
+function ProjectGallery({ images, title, onOpen }) {
+  const [i, setI] = useState(0)
+  const [hover, setHover] = useState(false)
+  useEffect(() => {
+    if (hover) return
+    const t = setInterval(() => setI((v) => (v + 1) % images.length), 4000)
+    return () => clearInterval(t)
+  }, [hover, images.length])
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(i)}
+      onMouseEnter={() => { setHover(true); setI(1 % images.length) }}
+      onMouseLeave={() => { setHover(false); setI(0) }}
+      className="group/g absolute inset-0 block h-full w-full cursor-zoom-in"
+      aria-label={`عرض صور ${title}`}
+    >
+      <AnimatePresence initial={false}>
+        <motion.img
+          key={images[i]}
+          src={images[i]}
+          alt={`${title}: لقطة ${i + 1}`}
+          loading="lazy"
+          initial={{ opacity: 0, scale: 1.04 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6, ease }}
+          className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-700 group-hover/g:scale-[1.04]"
+        />
+      </AnimatePresence>
+      <span className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-night-800 to-transparent" />
+      <span className="absolute bottom-3 left-3 grid h-9 w-9 place-items-center rounded-xl bg-night-950/70 text-white opacity-0 backdrop-blur transition group-hover/g:opacity-100">
+        <Icon name="expand" className="h-4 w-4" />
+      </span>
+      <span className="absolute bottom-4 right-1/2 flex translate-x-1/2 gap-1.5">
+        {images.map((_, k) => <span key={k} className={`h-1.5 rounded-full transition-all ${k === i ? 'w-5 bg-white' : 'w-1.5 bg-white/40'}`} />)}
+      </span>
+    </button>
+  )
+}
+
+function Lightbox({ data, onClose }) {
+  const [i, setI] = useState(data?.start ?? 0)
+  useEffect(() => { setI(data?.start ?? 0) }, [data])
+  useEffect(() => {
+    if (!data) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowLeft') setI((v) => (v + 1) % data.images.length)
+      if (e.key === 'ArrowRight') setI((v) => (v - 1 + data.images.length) % data.images.length)
+    }
+    window.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = '' }
+  }, [data, onClose])
+  return (
+    <AnimatePresence>
+      {data && (
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[70] flex flex-col items-center justify-center bg-night-950/90 p-4 backdrop-blur-md"
+          onClick={onClose}
+          role="dialog" aria-modal="true" aria-label={data.title}
+        >
+          <motion.img
+            key={data.images[i]}
+            src={data.images[i]}
+            alt={`${data.title}: لقطة ${i + 1}`}
+            initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35, ease }}
+            className="max-h-[80vh] max-w-full rounded-2xl border border-white/10 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <div className="mt-5 flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+            {data.images.map((src, k) => (
+              <button key={src} type="button" onClick={() => setI(k)} className={`h-14 w-20 overflow-hidden rounded-lg border-2 transition ${k === i ? 'border-mint-400' : 'border-transparent opacity-50 hover:opacity-100'}`} aria-label={`لقطة ${k + 1}`}>
+                <img src={src} alt="" className="h-full w-full object-cover object-top" />
+              </button>
+            ))}
+            <button type="button" onClick={onClose} className="mr-3 grid h-11 w-11 place-items-center rounded-xl text-white glass" aria-label="إغلاق">
+              <Icon name="close" className="h-5 w-5" />
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
 function Work() {
+  const [lightbox, setLightbox] = useState(null)
   return (
     <section id="work" className="relative scroll-mt-24 border-y border-white/[0.06] bg-night-900">
       <div className="mx-auto max-w-6xl px-5 py-28">
@@ -436,9 +533,11 @@ function Work() {
                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
                 className="group grad-border flex flex-col overflow-hidden rounded-3xl bg-night-800/70"
               >
-                <div className="relative h-48 overflow-hidden bg-gradient-to-br from-night-700 to-night-900">
-                  <ProjectVisual type={p.visual} />
-                  <span className="absolute right-4 top-4 rounded-full bg-night-950/70 px-3 py-1 text-xs font-bold text-mint-300 backdrop-blur">{p.kind}</span>
+                <div className={`relative overflow-hidden bg-gradient-to-br from-night-700 to-night-900 ${p.images ? 'h-60' : 'h-48'}`}>
+                  {p.images
+                    ? <ProjectGallery images={p.images} title={p.title} onOpen={(start) => setLightbox({ images: p.images, title: p.title, start })} />
+                    : <ProjectVisual type={p.visual} />}
+                  <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-night-950/70 px-3 py-1 text-xs font-bold text-mint-300 backdrop-blur">{p.kind}</span>
                 </div>
                 <div className="flex flex-1 flex-col p-7">
                   <div className="flex items-center justify-between gap-4">
@@ -474,6 +573,7 @@ function Work() {
           </motion.div>
         </Reveal>
       </div>
+      <Lightbox data={lightbox} onClose={() => setLightbox(null)} />
     </section>
   )
 }
@@ -548,7 +648,11 @@ function Contact() {
               نبدأ بمشروع صغير لنختبر العمل معاً. إذا ناسبكم الأسلوب والجودة، نكمل على باقي المشاريع.
             </p>
 
-            <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-10 flex flex-col flex-wrap items-center justify-center gap-3 sm:flex-row">
+              <a href={waLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-2xl bg-[#25D366] px-7 py-4 font-extrabold text-night-950 shadow-lg shadow-[#25D366]/25 transition hover:-translate-y-0.5 hover:shadow-[#25D366]/40">
+                <Icon name="whatsapp" className="h-5 w-5" />
+                تواصل عبر واتساب
+              </a>
               <a href={`mailto:${contact.email}`} className="inline-flex items-center gap-2 rounded-2xl bg-white px-7 py-4 font-extrabold text-night-950 transition hover:bg-mint-300">
                 <Icon name="mail" className="h-5 w-5" />
                 راسلني بالبريد
@@ -559,7 +663,9 @@ function Contact() {
               </button>
             </div>
 
-            <div className="mt-8 flex items-center justify-center gap-6 text-sm font-bold">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm font-bold">
+              <a href={waLink} target="_blank" rel="noreferrer" className="text-slate-400 transition hover:text-white" dir="ltr">{contact.whatsappDisplay}</a>
+              <span className="h-4 w-px bg-white/10" />
               <a href={contact.linkedin} target="_blank" rel="noreferrer" className="text-slate-400 transition hover:text-white">LinkedIn ↗</a>
               <span className="h-4 w-px bg-white/10" />
               <a href={contact.github} target="_blank" rel="noreferrer" className="text-slate-400 transition hover:text-white">GitHub ↗</a>
@@ -612,10 +718,24 @@ export default function App() {
         <Contact />
       </main>
       <footer className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 border-t border-white/[0.06] px-5 py-8 text-sm text-slate-500 sm:flex-row">
-        <span>© {new Date().getFullYear()} أيوب تقي · مطوّر ومهندس بيانات</span>
+        <span>© {new Date().getFullYear()} أيوب تاقي · مطوّر ومهندس بيانات</span>
         <span>المغرب · GMT+1</span>
       </footer>
       <BackToTop />
+      <motion.a
+        href={waLink}
+        target="_blank"
+        rel="noreferrer"
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 2.5, type: 'spring' }}
+        className="group fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-[#25D366] p-3.5 text-night-950 shadow-xl shadow-black/40 transition hover:pl-5"
+        aria-label="تواصل عبر واتساب"
+      >
+        <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-[#25D366]/40 [animation-duration:2.5s]" />
+        <Icon name="whatsapp" className="h-6 w-6" />
+        <span className="hidden max-w-0 overflow-hidden whitespace-nowrap text-sm font-extrabold transition-all duration-300 group-hover:max-w-[8rem] sm:inline">واتساب</span>
+      </motion.a>
     </>
   )
 }

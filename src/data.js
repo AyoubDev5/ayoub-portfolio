@@ -2,6 +2,8 @@ export const contact = {
   email: 'taqiayoub123@gmail.com',
   linkedin: 'https://www.linkedin.com/in/ayoub-taqi-dev',
   github: 'https://github.com/AyoubDev5',
+  whatsapp: '212681189317',
+  whatsappDisplay: '+212 681 189 317',
 }
 
 export const facts = [
@@ -41,6 +43,7 @@ export const projects = [
   {
     kind: 'متجر سلة',
     visual: 'store',
+    images: ['/work/azwah-1.webp', '/work/azwah-2.webp'],
     sub: 'تخصيص قالب',
     title: 'متجر العزوة',
     text: 'تخصيص عميق لقالب «رائد» على منصة سلة: شريط صور متحرك تلقائي، خطوط وألوان خاصة بالهوية، وإصلاحات في الواجهة، مع ربط النطاق الخاص وضبطه كنطاق رئيسي.',
@@ -50,6 +53,7 @@ export const projects = [
   {
     kind: 'قالب سلة',
     visual: 'theme',
+    images: ['/work/technova-1.webp', '/work/technova-2.webp'],
     sub: 'بناء من الصفر',
     title: 'قالب متاجر الإلكترونيات',
     text: 'قالب كامل لمتاجر الأجهزة والإلكترونيات، مبني بأداة Salla CLI وإطار Twilight، مع بناء ناجح على بوابة شركاء سلة.',

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { contact, businessDemos, businessPage, businessPhoto } from './data'
 import { Icon } from './ui'
 
@@ -28,7 +28,7 @@ function SectionHead({ eyebrow, title, text }) {
 
 function WhatsAppButton({ href, children, className = '' }) {
   return (
-    <a href={href} target="_blank" rel="noreferrer" className={`inline-flex min-h-[56px] items-center justify-center gap-2.5 rounded-2xl bg-[#25D366] px-7 py-4 text-lg font-extrabold text-ink-900 shadow-lg shadow-[#25D366]/25 transition hover:-translate-y-0.5 hover:bg-[#2fe072] ${className}`}>
+    <a href={href} target="_blank" rel="noreferrer" className={`relative inline-flex min-h-[56px] items-center justify-center gap-2.5 rounded-2xl bg-[#25D366] px-7 py-4 text-lg font-extrabold text-ink-900 shadow-lg shadow-[#25D366]/25 transition hover:-translate-y-0.5 hover:bg-[#2fe072] ${className}`}>
       <Icon name="whatsapp" className="h-6 w-6" />{children}
     </a>
   )
@@ -37,12 +37,37 @@ function WhatsAppButton({ href, children, className = '' }) {
 /* ---------- hero: the WhatsApp booking mock (signature moment) ---------- */
 
 function ChatMock({ t }) {
+  const ref = useRef(null)
+  // The loop is pure CSS. This only pauses it while the phone is off screen.
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !('IntersectionObserver' in window)) return
+    const io = new IntersectionObserver(([e]) => el.classList.toggle('chat-paused', !e.isIntersecting))
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
   return (
-    <figure className="hx mx-auto w-full max-w-[20rem] lg:mx-0" style={{ '--d': '380ms' }}>
-      <div className="overflow-hidden rounded-[2rem] border-[6px] border-[#1d2328] bg-[#0b141a] shadow-2xl shadow-black/50" aria-hidden="true">
+    <figure ref={ref} className="chat hx mx-auto w-full max-w-[20rem] lg:mx-0" style={{ '--d': '380ms' }}>
+      <div className="relative overflow-hidden rounded-[2rem] border-[6px] border-[#1d2328] bg-[#0b141a] shadow-2xl shadow-black/50" aria-hidden="true">
+        {/* phone status bar */}
+        <div className="flex h-7 items-center justify-between bg-[#1f2c34] px-5 text-[11px] font-semibold text-[#e9edef]">
+          <span dir="ltr">{t.clock}</span>
+          <span className="flex items-center gap-1.5">
+            <svg viewBox="0 0 16 10" className="h-2.5 w-4" fill="currentColor"><rect x="0" y="7" width="3" height="3" rx="0.5" /><rect x="4.3" y="5" width="3" height="5" rx="0.5" /><rect x="8.6" y="2.5" width="3" height="7.5" rx="0.5" /><rect x="12.9" y="0" width="3" height="10" rx="0.5" /></svg>
+            <svg viewBox="0 0 24 12" className="h-3 w-6" fill="none" stroke="currentColor"><rect x="0.5" y="0.5" width="20" height="11" rx="3" /><rect x="2.5" y="2.5" width="13" height="7" rx="1.5" fill="currentColor" stroke="none" /><path d="M22.5 4v4" strokeLinecap="round" /></svg>
+          </span>
+        </div>
+        {/* notification that slides in from the top */}
+        <div className="chat-notif absolute inset-x-2 top-2 z-10 flex items-start gap-2.5 rounded-2xl bg-white/95 p-2.5 shadow-xl">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[#25D366] text-white"><Icon name="whatsapp" className="h-5 w-5" /></span>
+          <span className="min-w-0 flex-1">
+            <span className="flex items-center justify-between gap-2 text-[11px] text-ink-600"><b className="font-bold text-ink-900">WhatsApp</b><span>{t.now}</span></span>
+            <span className="block text-[0.8rem] font-bold leading-5 text-ink-900">{t.notif}</span>
+          </span>
+        </div>
         {/* chat header */}
-        <div className="flex items-center gap-3 bg-[#1f2c34] px-4 py-3">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-mint-700 text-sm font-black text-white">
+        <div className="flex items-center gap-3 bg-[#1f2c34] px-4 pb-3 pt-1">
+          <span className="grid h-9 w-9 place-items-center rounded-full bg-mint-700 text-white">
             <Icon name="store" className="h-5 w-5" />
           </span>
           <span className="min-w-0 flex-1">
@@ -51,11 +76,10 @@ function ChatMock({ t }) {
           </span>
           <span className="rounded-md bg-amber-300 px-2 py-0.5 text-[11px] font-extrabold text-ink-900">{t.label}</span>
         </div>
-        {/* chat body: fixed height so nothing moves while the animation plays */}
+        {/* chat body: fixed height, so nothing around it moves while it plays */}
         <div className="chat-bg relative h-[17.5rem] px-3 py-4">
           <div className="chat-typing absolute start-3 top-4 flex items-center gap-1.5 rounded-xl rounded-ss-sm bg-[#202c33] px-3.5 py-3">
             <span className="chat-dot" /><span className="chat-dot" /><span className="chat-dot" />
-            <span className="sr-only">{t.typing}</span>
           </div>
           <div className="chat-msg max-w-[88%] rounded-xl rounded-ss-sm bg-[#202c33] px-3 py-2 text-[0.92rem] leading-6 text-[#e9edef] shadow">
             <p className="text-[11px] font-bold text-[#53bdeb]">{t.via}</p>
@@ -74,17 +98,66 @@ function ChatMock({ t }) {
   )
 }
 
-/* ---------- demos: card with desktop / phone switch ---------- */
+/* ---------- demos: card that switches desktop / phone ---------- */
 
-function DemoShowcase({ demo, lang, t }) {
+const AUTO_SWITCH_MS = 4200
+
+function DemoShowcase({ demo, lang, t, index }) {
   const [view, setView] = useState('desktop')
+  const [manual, setManual] = useState(false) // the visitor chose a view: stop switching for them
+  const [paused, setPaused] = useState(false) // hover, touch or keyboard focus
+  const [visible, setVisible] = useState(false)
+  const ref = useRef(null)
+  const touch = useRef(null)
+  const resume = useRef(0)
   const views = [['desktop', 'monitor', t.desktop], ['mobile', 'mobile', t.mobile]]
+  const other = (v) => (v === 'desktop' ? 'mobile' : 'desktop')
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !('IntersectionObserver' in window)) return
+    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.4 })
+    io.observe(el)
+    return () => { io.disconnect(); clearTimeout(resume.current) }
+  }, [])
+
+  // auto-switch only while on screen, not paused, not chosen by hand, motion allowed
+  useEffect(() => {
+    if (manual || paused || !visible) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const id = setTimeout(() => setView(other), AUTO_SWITCH_MS + index * 700)
+    return () => clearTimeout(id)
+  }, [view, manual, paused, visible, index])
+
+  const choose = (v) => { setManual(true); setView(v) }
+  const onTouchStart = (e) => {
+    clearTimeout(resume.current)
+    setPaused(true)
+    touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  }
+  const onTouchEnd = (e) => {
+    const s = touch.current
+    touch.current = null
+    resume.current = setTimeout(() => setPaused(false), 5000)
+    if (!s) return
+    const dx = e.changedTouches[0].clientX - s.x
+    const dy = e.changedTouches[0].clientY - s.y
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) choose(other(view)) // horizontal swipe, any direction
+  }
+
   return (
-    <article className="reveal flex flex-col overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-sand-300">
+    <article
+      ref={ref}
+      className="reveal flex flex-col overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-sand-300"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setPaused(false) }}
+    >
       <div className="bg-sand-200 p-4 sm:p-5">
         <p className="mb-3 inline-block rounded-full bg-ink-900 px-3 py-1 text-xs font-bold text-white">{t.badge}</p>
-        <div className="relative aspect-[16/10.6] overflow-hidden rounded-xl">
-          <div className={`absolute inset-0 flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-black/10 transition-opacity duration-200 ${view === 'desktop' ? 'opacity-100' : 'pointer-events-none opacity-0'}`}>
+        <div className="demo-stage relative aspect-[16/10.6] overflow-hidden rounded-xl" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+          <div className={`demo-view absolute inset-0 flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-black/10 ${view === 'desktop' ? 'is-on' : ''}`}>
             <span className="flex h-6 shrink-0 items-center gap-1 bg-sand-50 px-3" aria-hidden="true">
               <span className="h-2 w-2 rounded-full bg-sand-300" /><span className="h-2 w-2 rounded-full bg-sand-300" /><span className="h-2 w-2 rounded-full bg-sand-300" />
             </span>
@@ -96,7 +169,7 @@ function DemoShowcase({ demo, lang, t }) {
               className="min-h-0 w-full flex-1 object-cover object-top"
             />
           </div>
-          <div className={`absolute inset-0 flex justify-center transition-opacity duration-200 ${view === 'mobile' ? 'opacity-100' : 'pointer-events-none opacity-0'}`}>
+          <div className={`demo-view absolute inset-0 flex justify-center ${view === 'mobile' ? 'is-on' : ''}`}>
             <span className="block h-full overflow-hidden rounded-[1.3rem] border-[5px] border-ink-900 bg-ink-900 shadow-xl">
               <img
                 src={demo.images[1]}
@@ -120,7 +193,7 @@ function DemoShowcase({ demo, lang, t }) {
                 key={key}
                 type="button"
                 aria-pressed={view === key}
-                onClick={() => setView(key)}
+                onClick={() => choose(key)}
                 className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-lg px-3 text-sm font-bold transition ${view === key ? 'bg-white text-ink-900 shadow-sm' : 'text-ink-600 hover:text-ink-900'}`}
               >
                 <Icon name={icon} className="h-4 w-4" />{label}
@@ -166,6 +239,33 @@ export default function BusinessPage({ initialLang = 'fr' }) {
     document.documentElement.classList.add('reveal-on')
     els.forEach((el) => io.observe(el))
     return () => io.disconnect()
+  }, [])
+
+  // steps: the line fills from step 1 to 3 as the list scrolls through the screen.
+  // Without JS or with reduced motion the line stays full (--p defaults to 1 in CSS).
+  const stepsRef = useRef(null)
+  useEffect(() => {
+    const ol = stepsRef.current
+    if (!ol || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const items = [...ol.querySelectorAll('li')]
+    let raf = 0
+    const update = () => {
+      raf = 0
+      const r = ol.getBoundingClientRect()
+      const p = Math.min(1, Math.max(0, (window.innerHeight * 0.72 - r.top) / r.height))
+      ol.style.setProperty('--p', p.toFixed(3))
+      items.forEach((li, i) => li.classList.toggle('done', p >= i / Math.max(1, items.length - 1) - 0.02))
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+    ol.classList.add('steps-on')
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
   }, [])
 
   return (
@@ -219,10 +319,10 @@ export default function BusinessPage({ initialLang = 'fr' }) {
         <section id="services" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-16 sm:px-6 sm:py-24">
           <SectionHead eyebrow={t.services.eyebrow} title={t.services.title} />
           <ul className="mt-10 grid gap-4 sm:grid-cols-2">
-            {t.services.items.map((s) => (
-              <li key={s.title} className="reveal rounded-3xl bg-white p-6 shadow-sm ring-1 ring-sand-300 sm:p-7">
+            {t.services.items.map((s, i) => (
+              <li key={s.title} className="reveal rounded-3xl bg-white p-6 shadow-sm ring-1 ring-sand-300 sm:p-7" style={{ '--i': i }}>
                 <div className="flex items-start justify-between gap-3">
-                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-mint-700/10 text-mint-700"><Icon name={s.icon} className="h-6 w-6" /></span>
+                  <span className="svc-icon grid h-12 w-12 place-items-center rounded-2xl bg-mint-700/10 text-mint-700"><Icon name={s.icon} className="h-6 w-6" /></span>
                   {s.quote && <span className="rounded-full bg-clay-600/10 px-3 py-1 text-xs font-bold text-clay-700">{t.services.quote}</span>}
                 </div>
                 <h3 className="mt-5 text-xl font-extrabold text-ink-900">{s.title}</h3>
@@ -244,7 +344,7 @@ export default function BusinessPage({ initialLang = 'fr' }) {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <SectionHead eyebrow={t.demos.eyebrow} title={t.demos.title} text={t.demos.text} />
             <div className="mt-10 grid gap-6 md:grid-cols-2">
-              {businessDemos.map((d) => <DemoShowcase key={d.name} demo={d} lang={lang} t={t.demos} />)}
+              {businessDemos.map((d, i) => <DemoShowcase key={d.name} demo={d} lang={lang} t={t.demos} index={i} />)}
             </div>
           </div>
         </section>
@@ -252,11 +352,14 @@ export default function BusinessPage({ initialLang = 'fr' }) {
         {/* 4. how I work */}
         <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
           <SectionHead eyebrow={t.steps.eyebrow} title={t.steps.title} />
-          <ol className="relative mt-10 grid gap-8 md:grid-cols-3 md:gap-6">
-            <span aria-hidden="true" className="absolute bottom-6 start-6 top-6 w-px bg-sand-300 md:hidden" />
+          <div ref={stepsRef} className="steps relative mt-10">
+            {/* progress line: vertical on phones, horizontal from md */}
+            <span aria-hidden="true" className="steps-track steps-track-v md:hidden"><span className="steps-fill" /></span>
+            <span aria-hidden="true" className="steps-track steps-track-h hidden md:block"><span className="steps-fill" /></span>
+          <ol className="relative grid gap-8 md:grid-cols-3 md:gap-6">
             {t.steps.items.map((s, i) => (
-              <li key={s.title} className="reveal relative flex gap-5 md:flex-col md:gap-4">
-                <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-clay-700 text-xl font-black text-white">{i + 1}</span>
+              <li key={s.title} className="relative flex gap-5 md:flex-col md:gap-4">
+                <span className="step-badge relative grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-clay-700 text-xl font-black text-white">{i + 1}</span>
                 <div>
                   <h3 className="text-lg font-extrabold leading-7 text-ink-900">{s.title}</h3>
                   <p className="mt-1.5 leading-7 text-ink-600">{s.text}</p>
@@ -264,6 +367,7 @@ export default function BusinessPage({ initialLang = 'fr' }) {
               </li>
             ))}
           </ol>
+          </div>
         </section>
 
         {/* 5. price */}
@@ -353,10 +457,19 @@ export default function BusinessPage({ initialLang = 'fr' }) {
         © {new Date().getFullYear()} {t.name} · {t.footer}
       </footer>
 
-      {/* sticky WhatsApp bar on phones */}
+      {/* floating WhatsApp: sticky bar on phones, round button from sm. Each pulses once after 5 s (CSS). */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-sand-300 bg-sand-100/95 p-3 backdrop-blur-md sm:hidden">
-        <WhatsAppButton href={waLink} className="w-full">{t.hero.ctaWhatsapp}</WhatsAppButton>
+        <WhatsAppButton href={waLink} className="wa-pulse w-full">{t.hero.ctaWhatsapp}</WhatsAppButton>
       </div>
+      <a
+        href={waLink}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={t.hero.ctaWhatsapp}
+        className="wa-pulse fixed bottom-6 end-6 z-40 hidden h-14 w-14 place-items-center rounded-full bg-[#25D366] text-ink-900 shadow-xl shadow-black/20 transition hover:bg-[#2fe072] sm:grid"
+      >
+        <Icon name="whatsapp" className="h-7 w-7" />
+      </a>
     </div>
   )
 }

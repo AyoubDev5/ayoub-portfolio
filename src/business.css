@@ -1,4 +1,26 @@
-/* /business page only (loaded by src/business.jsx, after index.css). */
+/* /business page only (loaded by src/business.jsx, after index.css).
+   Motion rules: CSS first, small JS only to start/pause things. Everything is
+   visible without JS, and prefers-reduced-motion shows the final state. Only
+   opacity / transform / box-shadow are animated, inside fixed-size boxes: no layout shift. */
+
+/* Cairo, self-hosted (SIL Open Font License, from Google Fonts v31). One variable
+   file per script covers weights 200-1000; the latin file is preloaded in
+   business/index.html so the hero title paints once, already in Cairo. */
+@font-face {
+  font-family: 'Cairo'; font-style: normal; font-weight: 200 1000; font-display: swap;
+  src: url('/fonts/cairo-arabic.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EEFF;
+}
+@font-face {
+  font-family: 'Cairo'; font-style: normal; font-weight: 200 1000; font-display: swap;
+  src: url('/fonts/cairo-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Cairo'; font-style: normal; font-weight: 200 1000; font-display: swap;
+  src: url('/fonts/cairo-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 body { background: #f6f1e8; color: #15161b; }
 
@@ -12,41 +34,126 @@ body { background: #f6f1e8; color: #15161b; }
 .biz summary { list-style: none; }
 .biz summary::-webkit-details-marker { display: none; }
 
-/* ---------- hero entrance: one orchestrated sequence, CSS only ----------
-   Runs on page load from the pre-rendered HTML; no JS needed. Each .hx item
-   rises in after its --d delay. The chat then plays: typing -> message -> sheet. */
-@keyframes biz-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-@keyframes biz-typing {
-  0% { opacity: 0; transform: scale(0.92); }
-  12%, 82% { opacity: 1; transform: none; }
-  100% { opacity: 0; transform: scale(0.96); visibility: hidden; }
+/* ---------- 5. press feedback on every button / link ---------- */
+.biz :is(a, button) {
+  -webkit-tap-highlight-color: transparent;
+  transition-property: transform, background-color, color, box-shadow, opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
 }
-@keyframes biz-pop { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: none; } }
-@keyframes biz-dot { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-3px); opacity: 1; } }
+.biz :is(a, button):active { transform: scale(0.97); }
 
+/* one pulse ring on the floating WhatsApp button, 5 s after load, never repeated */
+.wa-pulse::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  animation: biz-pulse 1400ms ease-out 5s 1 both;
+}
+@keyframes biz-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6); }
+  100% { box-shadow: 0 0 0 18px rgba(37, 211, 102, 0); }
+}
+
+/* ---------- hero entrance (CSS only, runs from the pre-rendered HTML) ---------- */
+@keyframes biz-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 .hx { animation: biz-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: var(--d, 0ms); }
 
+/* ---------- 1. hero signature: WhatsApp booking, 8 s loop ----------
+   0.0 s  empty chat
+   0.3 s  notification slides down, leaves at 2.6 s
+   1.2 s  typing dots, until 2.4 s
+   2.5 s  message pops in
+   3.2 s  "added to Google Sheets" card
+   7.4 s  everything fades, loop restarts at 8 s.
+   The first cycle starts with the hero entrance (--start). */
+.chat { --cycle: 8s; --start: 700ms; }
 .chat-bg {
   background-color: #0b141a;
   background-image: radial-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px);
   background-size: 18px 18px;
 }
-.chat-typing { animation: biz-typing 1200ms ease both; animation-delay: 900ms; }
+.chat-notif, .chat-typing, .chat-msg, .chat-sheet {
+  animation-duration: var(--cycle);
+  animation-delay: var(--start);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.chat-notif { animation-name: chat-notif; }
+.chat-typing { animation-name: chat-typing; }
+.chat-msg { animation-name: chat-msg; transform-origin: 0 100%; }
+[dir="rtl"] .chat-msg { transform-origin: 100% 100%; }
+.chat-sheet { animation-name: chat-sheet; }
+
+@keyframes chat-notif {
+  0%, 3.75% { opacity: 0; transform: translateY(-115%); }
+  9%, 29% { opacity: 1; transform: none; }
+  33%, 100% { opacity: 0; transform: translateY(-115%); }
+}
+@keyframes chat-typing {
+  0%, 15% { opacity: 0; transform: scale(0.9); }
+  17.5%, 29.5% { opacity: 1; transform: none; }
+  31%, 100% { opacity: 0; transform: scale(0.96); }
+}
+@keyframes chat-msg {
+  0%, 31% { opacity: 0; transform: translateY(10px) scale(0.96); }
+  36%, 92.5% { opacity: 1; transform: none; }
+  97.5%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes chat-sheet {
+  0%, 40% { opacity: 0; transform: translateY(8px); }
+  45%, 92.5% { opacity: 1; transform: none; }
+  97.5%, 100% { opacity: 0; transform: none; }
+}
 .chat-dot { width: 7px; height: 7px; border-radius: 50%; background: #8696a0; animation: biz-dot 900ms ease-in-out infinite; }
 .chat-dot:nth-child(2) { animation-delay: 150ms; }
 .chat-dot:nth-child(3) { animation-delay: 300ms; }
-.chat-msg { animation: biz-pop 380ms cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 2050ms; transform-origin: 0 100%; }
-[dir="rtl"] .chat-msg { transform-origin: 100% 100%; }
-.chat-sheet { animation: biz-pop 380ms cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 2700ms; }
+@keyframes biz-dot { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-3px); opacity: 1; } }
+.chat-paused, .chat-paused * { animation-play-state: paused !important; }
+
+/* ---------- 2. demo cards: desktop <-> phone crossfade ---------- */
+.demo-stage { touch-action: pan-y; }
+.demo-view {
+  opacity: 0; transform: scale(0.985); pointer-events: none;
+  transition: opacity 300ms ease, transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.demo-view.is-on { opacity: 1; transform: none; pointer-events: auto; }
 
 /* ---------- scroll reveals: only after JS adds .reveal-on to <html> ---------- */
 .reveal-on .biz .reveal:not(.in) { opacity: 0; transform: translateY(10px); }
-.reveal-on .biz .reveal { transition: opacity 250ms ease, transform 250ms ease; }
+.reveal-on .biz .reveal {
+  transition: opacity 250ms ease, transform 250ms ease;
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
 
-/* ---------- reduced motion: show the final state, no movement ---------- */
+/* ---------- 3. service icons: small pop when the card enters, staggered ---------- */
+@keyframes biz-icon {
+  from { opacity: 0; transform: scale(0.6) rotate(-14deg); }
+  to { opacity: 1; transform: none; }
+}
+.reveal-on .biz .reveal.in .svc-icon {
+  animation: biz-icon 280ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 60ms);
+}
+
+/* ---------- 4. steps: progress line 1 -> 3 (JS sets --p from 0 to 1) ---------- */
+.steps { --p: 1; }
+.steps-track { position: absolute; background: #ddd2bf; border-radius: 2px; overflow: hidden; }
+.steps-track-v { top: 24px; bottom: 24px; inset-inline-start: 23px; width: 2px; }
+.steps-track-h { top: 23px; height: 2px; inset-inline-start: 24px; width: calc(66.666% + 16px); }
+.steps-fill { position: absolute; inset: 0; background: #a8461f; }
+.steps-track-v .steps-fill { transform-origin: top; transform: scaleY(var(--p)); }
+.steps-track-h .steps-fill { transform-origin: left; transform: scaleX(var(--p)); }
+[dir="rtl"] .steps-track-h .steps-fill { transform-origin: right; }
+.step-badge { z-index: 1; } /* state change is instant: the line carries the motion (and stays GPU-only) */
+.steps-on li:not(.done) .step-badge { background: #fff; color: #a8461f; box-shadow: inset 0 0 0 2px #a8461f; }
+
+/* ---------- reduced motion: final state, no movement ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .hx, .chat-msg, .chat-sheet { animation: none !important; opacity: 1 !important; transform: none !important; }
-  .chat-typing { display: none; }
-  .chat-dot { animation: none !important; }
+  .hx, .chat-msg, .chat-sheet, .svc-icon { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .chat-notif, .chat-typing { display: none; }
+  .chat-dot, .wa-pulse::after { animation: none !important; }
   .reveal-on .biz .reveal:not(.in) { opacity: 1; transform: none; }
+  .biz :is(a, button):active { transform: none; }
+  .demo-view { transition: none; }
+  .steps { --p: 1 !important; }
 }

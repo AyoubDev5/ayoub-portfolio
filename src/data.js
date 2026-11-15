@@ -150,6 +150,9 @@ export const businessPage = {
     },
     chat: {
       label: 'Exemple',
+      notif: 'Nouvelle réservation : Dacia Logan, du 12 au 15',
+      now: 'maintenant',
+      clock: '10:24',
       contact: 'Votre agence',
       status: 'en ligne',
       typing: 'en train d’écrire…',
@@ -247,6 +250,9 @@ export const businessPage = {
     },
     chat: {
       label: 'مثال',
+      notif: 'حجز جديد: داسيا لوغان، من 12 إلى 15',
+      now: 'الآن',
+      clock: '10:24',
       contact: 'وكالتكم',
       status: 'متصل',
       typing: 'يكتب…',

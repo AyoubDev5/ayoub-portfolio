@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/oujda", "destination": "/oujda/index.html" }
+  ]
+}

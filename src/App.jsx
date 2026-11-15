@@ -3,7 +3,11 @@ import {
   AnimatePresence, motion, useInView, useMotionTemplate, useMotionValue,
   useScroll, useSpring, useTransform, animate,
 } from 'framer-motion'
-import { contact, facts, services, projects, pastClients, steps, stack } from './data'
+import {
+  contact, facts, services, projects, pastClients, steps, stack,
+  carDemos, carDemoFeatures, carDemoStack, carDemoSteps,
+} from './data'
+import { Icon, DemoCard } from './ui'
 
 const ease = [0.22, 1, 0.36, 1]
 const waLink = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent('السلام عليكم أيوب، شفت ملفك وعندنا مشروع نبي نتكلم عنه.')}`
@@ -21,37 +25,11 @@ function Reveal({ children, className = '' }) {
   )
 }
 
-/* ---------- icons ---------- */
-function Icon({ name, className = 'h-6 w-6' }) {
-  const p = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round', className, viewBox: '0 0 24 24' }
-  switch (name) {
-    case 'store': return <svg {...p}><path d="M3 9l1.5-5h15L21 9" /><path d="M4 9v11h16V9" /><path d="M3 9a3 3 0 006 0 3 3 0 006 0 3 3 0 006 0" /><path d="M10 20v-5h4v5" /></svg>
-    case 'plug': return <svg {...p}><path d="M9 2v5M15 2v5" /><path d="M6 7h12v4a6 6 0 01-12 0V7z" /><path d="M12 17v5" /></svg>
-    case 'chart': return <svg {...p}><path d="M3 3v18h18" /><path d="M7 15l4-4 3 3 5-6" /></svg>
-    case 'spark': return <svg {...p}><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /><path d="M19 16l.7 1.8L21.5 18.5l-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7L19 16z" /></svg>
-    case 'arrow': return <svg {...p}><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
-    case 'external': return <svg {...p}><path d="M7 17L17 7M8 7h9v9" /></svg>
-    case 'copy': return <svg {...p}><rect x="9" y="9" width="12" height="12" rx="2" /><path d="M5 15V5a2 2 0 012-2h10" /></svg>
-    case 'check': return <svg {...p}><path d="M5 12l5 5 9-11" /></svg>
-    case 'menu': return <svg {...p}><path d="M4 7h16M4 12h16M4 17h10" /></svg>
-    case 'close': return <svg {...p}><path d="M6 6l12 12M18 6L6 18" /></svg>
-    case 'up': return <svg {...p}><path d="M12 19V5M6 11l6-6 6 6" /></svg>
-    case 'mail': return <svg {...p}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></svg>
-    case 'expand': return <svg {...p}><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" /></svg>
-    case 'whatsapp':
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
-          <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 004.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0012.04 2zm5.8 14.1c-.24.68-1.42 1.3-1.95 1.35-.5.05-.97.23-3.27-.68-2.77-1.09-4.52-3.92-4.66-4.1-.13-.18-1.11-1.48-1.11-2.82 0-1.34.7-2 .95-2.27.25-.27.54-.34.72-.34h.52c.17 0 .39-.06.61.47.23.54.77 1.88.84 2.02.07.13.11.29.02.47-.09.18-.13.29-.27.45l-.4.47c-.13.13-.27.28-.12.55.16.27.7 1.15 1.5 1.86 1.03.92 1.9 1.2 2.17 1.34.27.13.43.11.59-.07.16-.18.68-.79.86-1.06.18-.27.36-.23.61-.14.25.09 1.58.75 1.85.88.27.13.45.2.52.32.07.11.07.66-.17 1.33z" />
-        </svg>
-      )
-    default: return null
-  }
-}
-
 /* ---------- nav ---------- */
 const navLinks = [
   ['services', 'الخدمات'],
   ['work', 'الأعمال'],
+  ['demos', 'نماذج'],
   ['process', 'طريقة العمل'],
 ]
 
@@ -71,7 +49,7 @@ function useActiveSection(ids) {
 function Nav() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const active = useActiveSection(['services', 'work', 'process', 'contact'])
+  const active = useActiveSection(['services', 'work', 'demos', 'process', 'contact'])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -171,8 +149,9 @@ function HeroVisual() {
       <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-mint-500/20 via-sky-500/10 to-amber-400/10 blur-2xl" />
       <div className="grad-border relative rounded-3xl bg-night-800/80 p-5 shadow-2xl shadow-black/50 backdrop-blur-xl">
         <div className="flex items-center justify-between">
-          <div className="flex gap-1.5">
+          <div className="flex items-center gap-1.5">
             <span className="h-3 w-3 rounded-full bg-white/15" /><span className="h-3 w-3 rounded-full bg-white/15" /><span className="h-3 w-3 rounded-full bg-white/15" />
+            <span className="ms-2 rounded-md bg-amber-400/15 px-2 py-0.5 text-[11px] font-bold text-amber-300">مثال توضيحي</span>
           </div>
           <span className="rounded-md bg-white/5 px-2 py-0.5 text-[11px] text-slate-400" dir="ltr">store.salla.sa / dashboard</span>
         </div>
@@ -578,6 +557,55 @@ function Work() {
   )
 }
 
+function CarDemos() {
+  const [lightbox, setLightbox] = useState(null)
+  return (
+    <section id="demos" className="mx-auto max-w-6xl scroll-mt-24 px-5 py-28">
+      <Reveal>
+        <SectionTitle
+          eyebrow="نماذج"
+          title="نماذج مواقع لوكالات كراء السيارات"
+          text="نموذجان تجريبيان بعلامات تجارية وهمية، وليسا لعملاء حقيقيين. لكل وكالة أجهّز نسخة بمعلوماتها وألوانها."
+        />
+        <div className="grid gap-6 md:grid-cols-2">
+          {carDemos.map((d) => (
+            <DemoCard
+              key={d.name}
+              as={motion.article}
+              variants={fadeUp}
+              whileHover={{ y: -8 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+              demo={d}
+              text={d.text.ar}
+              badge="نموذج تجريبي"
+              cta="شاهد النموذج"
+              features={carDemoFeatures.ar}
+              stack={carDemoStack}
+              onOpen={() => setLightbox({ images: d.images, title: `${d.name} (نموذج)`, start: 0 })}
+            />
+          ))}
+        </div>
+
+        <motion.div variants={fadeUp} className="mt-10 rounded-3xl p-7 glass sm:p-9">
+          <h3 className="text-2xl font-extrabold text-white">كيف أعمل مع الوكالات</h3>
+          <ol className="mt-7 grid gap-6 md:grid-cols-3">
+            {carDemoSteps.ar.map((s, i) => (
+              <li key={s.title} className="flex gap-4">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-mint-400/30 bg-night-900 text-lg font-black text-mint-300">{i + 1}</span>
+                <div>
+                  <p className="font-extrabold text-white">{s.title}</p>
+                  <p className="mt-1.5 text-sm leading-7 text-slate-400">{s.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </motion.div>
+      </Reveal>
+      <Lightbox data={lightbox} onClose={() => setLightbox(null)} />
+    </section>
+  )
+}
+
 function Process() {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 75%', 'end 60%'] })
@@ -713,6 +741,7 @@ export default function App() {
         <Hero />
         <Services />
         <Work />
+        <CarDemos />
         <Process />
         <Stack />
         <Contact />

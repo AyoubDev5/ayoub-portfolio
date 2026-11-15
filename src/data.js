@@ -138,6 +138,7 @@ export const businessPage = {
     dir: 'ltr',
     title: 'Ayoub Taqi — Sites web et automatisation pour entreprises',
     other: 'العربية',
+    nav: { services: 'Services', demos: 'Réalisations', price: 'Prix', faq: 'FAQ', label: 'Sections de la page' },
     name: 'Ayoub Taqi',
     skip: 'Aller au contenu',
     hero: {
@@ -151,6 +152,8 @@ export const businessPage = {
     chat: {
       label: 'Exemple',
       notif: 'Nouvelle réservation : Dacia Logan, du 12 au 15',
+      cardA: { label: 'WhatsApp', title: 'Réservation reçue' },
+      cardB: { label: 'Google Sheets', title: 'Tableau mis à jour' },
       now: 'maintenant',
       clock: '10:24',
       contact: 'Votre agence',
@@ -168,6 +171,7 @@ export const businessPage = {
       title: 'Ce que je fais pour votre entreprise',
       gets: 'Ce que vous obtenez',
       quote: 'Sur devis',
+      label: 'Service',
       items: [
         { icon: 'page', title: 'Site vitrine ou de réservation', points: ['Vos services, prix et horaires, clairs sur téléphone', 'Les réservations arrivent directement sur votre WhatsApp', 'En français et en arabe'] },
         { icon: 'pin', title: 'Présence sur Google', points: ['Votre site relié à votre fiche Google Maps', 'Adresse, horaires et téléphone à jour', 'Les clients vous trouvent et vous appellent en un clic'] },
@@ -238,6 +242,7 @@ export const businessPage = {
     dir: 'rtl',
     title: 'أيوب تاقي — مواقع إلكترونية وأتمتة للشركات',
     other: 'Français',
+    nav: { services: 'الخدمات', demos: 'الأعمال', price: 'الثمن', faq: 'أسئلة', label: 'أقسام الصفحة' },
     name: 'أيوب تاقي',
     skip: 'انتقل إلى المحتوى',
     hero: {
@@ -251,6 +256,8 @@ export const businessPage = {
     chat: {
       label: 'مثال',
       notif: 'حجز جديد: داسيا لوغان، من 12 إلى 15',
+      cardA: { label: 'واتساب', title: 'تم استلام الحجز' },
+      cardB: { label: 'Google Sheets', title: 'تم تحديث الجدول' },
       now: 'الآن',
       clock: '10:24',
       contact: 'وكالتكم',
@@ -268,6 +275,7 @@ export const businessPage = {
       title: 'ماذا أقدّم لشركتكم',
       gets: 'ماذا تحصلون عليه',
       quote: 'حسب الطلب',
+      label: 'خدمة',
       items: [
         { icon: 'page', title: 'موقع تعريفي أو موقع حجز', points: ['خدماتكم وأثمنتكم وأوقاتكم، واضحة على الهاتف', 'الحجوزات تصلكم مباشرة على واتساب', 'بالفرنسية والعربية'] },
         { icon: 'pin', title: 'الظهور على Google', points: ['موقعكم مربوط بصفحتكم على خرائط Google', 'العنوان والأوقات والهاتف محدّثة', 'الزبائن يجدونكم ويتصلون بكم بنقرة واحدة'] },

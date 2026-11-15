@@ -1,5 +1,5 @@
-// Components shared by the home page (App.jsx) and the /oujda page (OujdaPage.jsx).
-// No framer-motion here, so the /oujda page stays light.
+// Components shared by the home page (App.jsx) and the /business page (BusinessPage.jsx).
+// No framer-motion here, so the /business page stays light.
 
 export function Icon({ name, className = 'h-6 w-6' }) {
   const p = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round', className, viewBox: '0 0 24 24', 'aria-hidden': true }
@@ -38,7 +38,7 @@ export function Icon({ name, className = 'h-6 w-6' }) {
  * Uses logical classes (start/end), so it works in RTL and LTR.
  *  - `as`: wrapper element (the home page passes motion.article)
  *  - `onOpen`: if given, the screenshots open a lightbox; otherwise they link to the demo
- *  - `stack`: tech tags; omit to hide them (the /oujda page does)
+ *  - `stack`: tech tags; omit to hide them (the /business page does)
  */
 export function DemoCard({ demo, text, badge, cta, features, stack, onOpen, as: Tag = 'article', className = '', ...rest }) {
   const visualClass = 'relative block bg-gradient-to-br from-night-700 to-night-900 px-5 pb-9 pt-5 text-start sm:px-6'

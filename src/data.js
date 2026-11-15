@@ -119,12 +119,12 @@ export const carDemoSteps = {
   ],
 }
 
-/* ---------- /oujda page (local businesses in Oujda), FR + AR ---------- */
+/* ---------- /business page (local businesses in Oujda), FR + AR ---------- */
 // To show a real photo: put it in public/ (e.g. public/ayoub.jpg, ~400px, under 60 KB)
 // and set photo: '/ayoub.jpg'. While it is null, the page shows the initials "AT".
-export const oujdaPhoto = null
+export const businessPhoto = null
 
-export const oujda = {
+export const businessPage = {
   fr: {
     dir: 'ltr',
     title: 'Ayoub Taqi — Sites web pour commerces à Oujda',

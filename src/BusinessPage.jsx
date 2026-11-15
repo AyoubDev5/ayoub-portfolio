@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { contact, carDemos, carDemoFeatures, carDemoSteps, oujda, oujdaPhoto } from './data'
+import { contact, carDemos, carDemoFeatures, carDemoSteps, businessPage, businessPhoto } from './data'
 import { Icon, DemoCard } from './ui'
 
 // 212681189317 -> "06 81 18 93 17" (the format people in Morocco recognise)
@@ -10,7 +10,7 @@ function initialLang() {
   try {
     const q = new URLSearchParams(window.location.search).get('lang')
     if (q === 'ar' || q === 'fr') return q
-    const saved = localStorage.getItem('oujda-lang')
+    const saved = localStorage.getItem('business-lang')
     if (saved === 'ar' || saved === 'fr') return saved
   } catch { /* storage blocked: fall back to French */ }
   return 'fr'
@@ -32,9 +32,9 @@ function WhatsAppButton({ href, children, className = '' }) {
   )
 }
 
-export default function OujdaPage() {
+export default function BusinessPage() {
   const [lang, setLang] = useState(initialLang)
-  const t = oujda[lang]
+  const t = businessPage[lang]
   const other = lang === 'fr' ? 'ar' : 'fr'
   const waLink = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(t.waMsg)}`
 
@@ -42,7 +42,7 @@ export default function OujdaPage() {
     document.documentElement.lang = lang
     document.documentElement.dir = t.dir
     document.title = t.title
-    try { localStorage.setItem('oujda-lang', lang) } catch { /* ignore */ }
+    try { localStorage.setItem('business-lang', lang) } catch { /* ignore */ }
     const url = new URL(window.location.href)
     if (lang === 'ar') url.searchParams.set('lang', 'ar')
     else url.searchParams.delete('lang')
@@ -168,8 +168,8 @@ export default function OujdaPage() {
         {/* 6. about */}
         <section className="border-y border-white/[0.06] bg-night-900">
           <div className="mx-auto flex max-w-5xl flex-col gap-7 px-4 py-16 sm:flex-row sm:items-center sm:gap-10 sm:px-5 sm:py-20">
-            {oujdaPhoto ? (
-              <img src={oujdaPhoto} alt={lang === 'ar' ? 'أيوب تاقي' : 'Ayoub Taqi'} width="160" height="160" loading="lazy" decoding="async" className="h-32 w-32 shrink-0 rounded-3xl object-cover sm:h-40 sm:w-40" />
+            {businessPhoto ? (
+              <img src={businessPhoto} alt={lang === 'ar' ? 'أيوب تاقي' : 'Ayoub Taqi'} width="160" height="160" loading="lazy" decoding="async" className="h-32 w-32 shrink-0 rounded-3xl object-cover sm:h-40 sm:w-40" />
             ) : (
               <span className="grid h-32 w-32 shrink-0 place-items-center rounded-3xl bg-gradient-to-br from-mint-400 to-sky-500 text-4xl font-black text-night-950 sm:h-40 sm:w-40" aria-hidden>AT</span>
             )}

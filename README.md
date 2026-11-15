@@ -13,7 +13,8 @@ Content lives in `src/data.js`.
 ## Pages
 
 - `/` — Arabic, for Gulf agencies (`index.html` → `src/App.jsx`).
-- `/oujda/` — French + Arabic, for local businesses in Oujda (`oujda/index.html` → `src/OujdaPage.jsx`).
-  Its Open Graph tags live in `oujda/index.html` (link previews do not run JS).
-  Texts are in `oujda` in `src/data.js`; set `oujdaPhoto` there to show a real photo.
-  `vercel.json` rewrites `/oujda` → `/oujda/index.html`.
+- `/business` — French + Arabic, for local businesses in Oujda (`business/index.html` → `src/BusinessPage.jsx`).
+  Its Open Graph tags live in `business/index.html` (link previews do not run JS).
+  Texts are in `businessPage` in `src/data.js`; set `businessPhoto` there to show a real photo.
+  `vercel.json` rewrites `/business` → `/business/index.html` and permanently redirects
+  the old `/oujda` route (and `/oujda/...`) to `/business`, keeping `?lang=ar`.

@@ -7,13 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ayoub Taqi — Sites web pour commerces à Oujda</title>
     <meta name="description" content="Ayoub Taqi, développeur web à Oujda : sites simples et rapides pour les commerces locaux, avec les réservations envoyées directement sur WhatsApp. En français et en arabe." />
-    <link rel="canonical" href="https://ayoub-portfolio-pied.vercel.app/oujda" />
+    <link rel="canonical" href="https://ayoub-portfolio-pied.vercel.app/business" />
     <!-- Link previews (WhatsApp, Facebook). Crawlers do not run JS, so these must stay in this static file. -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://ayoub-portfolio-pied.vercel.app/oujda" />
+    <meta property="og:url" content="https://ayoub-portfolio-pied.vercel.app/business" />
     <meta property="og:title" content="Ayoub Taqi — Sites web pour commerces à Oujda" />
     <meta property="og:description" content="Sites simples et rapides pour les commerces d'Oujda, avec réservation sur WhatsApp. Vous testez avant de payer." />
-    <meta property="og:image" content="https://ayoub-portfolio-pied.vercel.app/og-oujda.jpg" />
+    <meta property="og:image" content="https://ayoub-portfolio-pied.vercel.app/og-business.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="fr_MA" />
@@ -22,7 +22,7 @@
     <script>
       // Apply the saved language before React renders, to avoid a LTR -> RTL jump.
       try {
-        var l = new URLSearchParams(location.search).get('lang') || localStorage.getItem('oujda-lang');
+        var l = new URLSearchParams(location.search).get('lang') || localStorage.getItem('business-lang');
         if (l === 'ar') { document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl'; }
       } catch (e) {}
     </script>
@@ -32,6 +32,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/oujda.jsx"></script>
+    <script type="module" src="/src/business.jsx"></script>
   </body>
 </html>

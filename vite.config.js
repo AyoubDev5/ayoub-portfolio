@@ -2,35 +2,37 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// Two pages: / (Gulf agencies, Arabic) and /oujda/ (local businesses in Oujda, FR + AR).
+// Two pages: / (Gulf agencies, Arabic) and /business/ (local businesses in Oujda, FR + AR).
 // Each page is its own HTML file so link previews read its Open Graph tags without JS.
 
-// In `vite dev` / `vite preview`, "/oujda" (no slash) would fall back to the home page.
-// Redirect it to "/oujda/" so local testing matches production (vercel.json handles prod).
-const oujdaSlash = () => {
+// Same redirects as vercel.json, for `vite dev` / `vite preview`:
+//   /oujda, /oujda/  -> /business/   (old route, keeps old links working)
+//   /business        -> /business/   (otherwise dev/preview fall back to the home page)
+const pageRedirects = () => {
   const redirect = (req, res, next) => {
     const [path, query] = req.url.split('?')
-    if (path === '/oujda') {
+    const target = path === '/oujda' || path === '/oujda/' || path === '/business' ? '/business/' : null
+    if (target) {
       res.statusCode = 301
-      res.setHeader('Location', '/oujda/' + (query ? `?${query}` : ''))
+      res.setHeader('Location', target + (query ? `?${query}` : ''))
       return res.end()
     }
     next()
   }
   return {
-    name: 'oujda-trailing-slash',
+    name: 'page-redirects',
     configureServer: (server) => { server.middlewares.use(redirect) },
     configurePreviewServer: (server) => { server.middlewares.use(redirect) },
   }
 }
 
 export default defineConfig({
-  plugins: [react(), oujdaSlash()],
+  plugins: [react(), pageRedirects()],
   build: {
     rollupOptions: {
       input: {
         main: fileURLToPath(new URL('./index.html', import.meta.url)),
-        oujda: fileURLToPath(new URL('./oujda/index.html', import.meta.url)),
+        business: fileURLToPath(new URL('./business/index.html', import.meta.url)),
       },
     },
   },

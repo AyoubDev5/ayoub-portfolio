@@ -26,9 +26,11 @@ const pageRedirects = () => {
   }
 }
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [react(), pageRedirects()],
-  build: {
+  // The SSR build (src/business-ssr.jsx, used by scripts/prerender.mjs) takes its
+  // input from the --ssr flag; only the client build needs the two HTML pages.
+  build: isSsrBuild ? {} : {
     rollupOptions: {
       input: {
         main: fileURLToPath(new URL('./index.html', import.meta.url)),
@@ -36,4 +38,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

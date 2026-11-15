@@ -1,0 +1,52 @@
+/* /business page only (loaded by src/business.jsx, after index.css). */
+
+body { background: #f6f1e8; color: #15161b; }
+
+/* Focus: index.css uses mint-400, too light on sand. Dark bands keep mint-400. */
+.biz a:focus-visible,
+.biz button:focus-visible,
+.biz summary:focus-visible { outline: 3px solid #0b7a5e; outline-offset: 3px; border-radius: 0.75rem; }
+.biz .bg-night-950 a:focus-visible,
+.biz .bg-night-950 button:focus-visible { outline-color: #3ee6b3; }
+
+.biz summary { list-style: none; }
+.biz summary::-webkit-details-marker { display: none; }
+
+/* ---------- hero entrance: one orchestrated sequence, CSS only ----------
+   Runs on page load from the pre-rendered HTML; no JS needed. Each .hx item
+   rises in after its --d delay. The chat then plays: typing -> message -> sheet. */
+@keyframes biz-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes biz-typing {
+  0% { opacity: 0; transform: scale(0.92); }
+  12%, 82% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: scale(0.96); visibility: hidden; }
+}
+@keyframes biz-pop { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes biz-dot { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-3px); opacity: 1; } }
+
+.hx { animation: biz-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: var(--d, 0ms); }
+
+.chat-bg {
+  background-color: #0b141a;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+.chat-typing { animation: biz-typing 1200ms ease both; animation-delay: 900ms; }
+.chat-dot { width: 7px; height: 7px; border-radius: 50%; background: #8696a0; animation: biz-dot 900ms ease-in-out infinite; }
+.chat-dot:nth-child(2) { animation-delay: 150ms; }
+.chat-dot:nth-child(3) { animation-delay: 300ms; }
+.chat-msg { animation: biz-pop 380ms cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 2050ms; transform-origin: 0 100%; }
+[dir="rtl"] .chat-msg { transform-origin: 100% 100%; }
+.chat-sheet { animation: biz-pop 380ms cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 2700ms; }
+
+/* ---------- scroll reveals: only after JS adds .reveal-on to <html> ---------- */
+.reveal-on .biz .reveal:not(.in) { opacity: 0; transform: translateY(10px); }
+.reveal-on .biz .reveal { transition: opacity 250ms ease, transform 250ms ease; }
+
+/* ---------- reduced motion: show the final state, no movement ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hx, .chat-msg, .chat-sheet { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .chat-typing { display: none; }
+  .chat-dot { animation: none !important; }
+  .reveal-on .biz .reveal:not(.in) { opacity: 1; transform: none; }
+}

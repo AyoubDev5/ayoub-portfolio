@@ -3,32 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230f6b5c'/><text x='16' y='22' font-size='16' text-anchor='middle' fill='white' font-family='Arial'>AT</text></svg>" />
-    <meta name="theme-color" content="#07080d" />
+    <meta name="theme-color" content="#f6f1e8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ayoub Taqi — Sites web pour commerces à Oujda</title>
-    <meta name="description" content="Ayoub Taqi, développeur web à Oujda : sites simples et rapides pour les commerces locaux, avec les réservations envoyées directement sur WhatsApp. En français et en arabe." />
+    <title>Ayoub Taqi — Sites web et automatisation pour entreprises</title>
+    <meta name="description" content="Ayoub Taqi, développeur web à Oujda : sites web, présence Google et automatisations simples pour les entreprises au Maroc. Réservations sur WhatsApp, en français et en arabe. Vous testez avant de payer." />
     <link rel="canonical" href="https://ayoub-portfolio-pied.vercel.app/business" />
     <!-- Link previews (WhatsApp, Facebook). Crawlers do not run JS, so these must stay in this static file. -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://ayoub-portfolio-pied.vercel.app/business" />
-    <meta property="og:title" content="Ayoub Taqi — Sites web pour commerces à Oujda" />
-    <meta property="og:description" content="Sites simples et rapides pour les commerces d'Oujda, avec réservation sur WhatsApp. Vous testez avant de payer." />
+    <meta property="og:title" content="Ayoub Taqi — Sites web et automatisation pour entreprises" />
+    <meta property="og:description" content="Sites web et outils simples pour les entreprises au Maroc : réservations sur WhatsApp, présence Google, automatisations. Vous testez avant de payer." />
     <meta property="og:image" content="https://ayoub-portfolio-pied.vercel.app/og-business.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="fr_MA" />
     <meta property="og:locale:alternate" content="ar_MA" />
     <meta name="twitter:card" content="summary_large_image" />
-    <script>
-      // Apply the saved language before React renders, to avoid a LTR -> RTL jump.
-      try {
-        var l = new URLSearchParams(location.search).get('lang') || localStorage.getItem('business-lang');
-        if (l === 'ar') { document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl'; }
-      } catch (e) {}
-    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <!-- Font loads without blocking the first paint (text shows in a fallback font first). -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" /></noscript>
   </head>
   <body>
     <div id="root"></div>

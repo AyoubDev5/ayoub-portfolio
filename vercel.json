@@ -1,4 +1,7 @@
 {
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "redirects": [
     { "source": "/oujda", "destination": "/business", "permanent": true },
     { "source": "/oujda/:path*", "destination": "/business", "permanent": true }

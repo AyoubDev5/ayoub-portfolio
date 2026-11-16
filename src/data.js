@@ -124,7 +124,7 @@ export const carDemoSteps = {
 // numbers of projects or years. Demos must come from demo-* sites (fictional brands).
 
 // To show a real photo: put it in public/ (e.g. public/ayoub.webp, ~320px, under 40 KB)
-// and set businessPhoto = '/ayoub.webp'. While it is null, the page shows the initials "AT".
+// and set businessPhoto = '/ayoub.webp'. While it is null, the page shows the brand mark (public/brand/mark-on-dark.svg).
 export const businessPhoto = null
 
 // Demos shown on /business. Add a new demo-* site here (screenshots in public/work/).

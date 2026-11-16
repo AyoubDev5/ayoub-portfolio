@@ -435,7 +435,9 @@ export default function BusinessPage({ initialLang = 'fr' }) {
             {businessPhoto ? (
               <img src={businessPhoto} alt={t.about.photoAlt} width="160" height="160" loading="lazy" decoding="async" className="h-36 w-36 shrink-0 rounded-[1.4rem] object-cover sm:h-40 sm:w-40" />
             ) : (
-              <span className="grid h-36 w-36 shrink-0 place-items-center rounded-[1.4rem] bg-gradient-to-br from-mint-400 to-sky-500 text-5xl font-black text-night-950 sm:h-40 sm:w-40" aria-hidden="true">AT</span>
+              <span className="grid h-36 w-36 shrink-0 place-items-center rounded-[1.4rem] bg-coal-950 ring-1 ring-white/10 sm:h-40 sm:w-40">
+                <img src="/brand/mark-on-dark.svg" alt="Ayoub Taqi" width="96" height="96" loading="lazy" decoding="async" className="h-24 w-24" />
+              </span>
             )}
             <div>
               <div className="flex flex-wrap items-center gap-3">

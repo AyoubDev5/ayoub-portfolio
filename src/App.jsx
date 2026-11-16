@@ -69,7 +69,7 @@ function Nav() {
     >
       <nav className={`mx-auto flex max-w-6xl items-center justify-between rounded-2xl px-4 py-2.5 transition-all duration-300 sm:px-5 ${scrolled ? 'glass shadow-2xl shadow-black/40' : 'border border-transparent'}`}>
         <a href="#top" className="flex items-center gap-2.5" aria-label="الصفحة الرئيسية">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-mint-400 to-sky-500 text-sm font-black text-night-950">AT</span>
+          <img src="/brand/mark-on-dark.svg" alt="Ayoub Taqi" width="32" height="32" className="h-8 w-8 shrink-0" />
           <span className="text-lg font-bold text-white">أيوب تاقي</span>
         </a>
 
@@ -746,8 +746,11 @@ export default function App() {
         <Stack />
         <Contact />
       </main>
-      <footer className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 border-t border-white/[0.06] px-5 py-8 text-sm text-slate-500 sm:flex-row">
-        <span>© {new Date().getFullYear()} أيوب تاقي · مطوّر ومهندس بيانات</span>
+      <footer className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 border-t border-white/[0.06] px-5 pb-28 pt-8 text-sm sm:pb-8 text-slate-500 sm:flex-row">
+        <span className="flex items-center gap-2.5">
+          <img src="/brand/mark-on-dark.svg" alt="Ayoub Taqi" width="32" height="32" className="h-8 w-8 shrink-0" />
+          <span>© {new Date().getFullYear()} أيوب تاقي · مطوّر ومهندس بيانات</span>
+        </span>
         <span>المغرب · GMT+1</span>
       </footer>
       <BackToTop />

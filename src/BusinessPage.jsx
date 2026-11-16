@@ -296,7 +296,7 @@ export default function BusinessPage({ initialLang = 'fr' }) {
       <header className="frame frame-top mx-2 mt-2 rounded-t-[1.75rem] sm:mx-4 sm:mt-4 sm:rounded-t-[2.25rem]">
         <div className="relative mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-8 sm:py-6">
           <a href="#top" className="flex min-h-[44px] min-w-0 items-center gap-2.5">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-mint-400 to-sky-500 text-sm font-black text-night-950" aria-hidden="true">AT</span>
+            <img src="/brand/mark-on-dark.svg" alt="Ayoub Taqi" width="32" height="32" className="h-8 w-8 shrink-0" />
             <span className="truncate text-base font-bold text-cream">{t.name}</span>
           </a>
           <nav aria-label={t.nav.label} className="hidden md:block">
@@ -497,7 +497,10 @@ export default function BusinessPage({ initialLang = 'fr' }) {
       </main>
 
       <footer className="flex flex-col items-center gap-3 px-4 pb-28 pt-8 text-center text-sm text-taupe sm:flex-row sm:justify-center sm:gap-6 sm:pb-10">
-        <span>© {new Date().getFullYear()} {t.name} · {t.footer}</span>
+        <span className="flex items-center gap-2.5">
+          <img src="/brand/mark-on-dark.svg" alt="Ayoub Taqi" width="32" height="32" className="h-8 w-8 shrink-0" />
+          <span>© {new Date().getFullYear()} {t.name} · {t.footer}</span>
+        </span>
         <button type="button" onClick={() => setLang(other)} lang={other} className="min-h-[44px] rounded-full px-4 font-semibold text-cream ring-1 ring-white/10 hover:bg-white/[0.06]">{t.other}</button>
       </footer>
 
